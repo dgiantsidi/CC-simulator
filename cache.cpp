@@ -5,12 +5,14 @@
 Cache::Cache(int size, int number) {
     lineSize = size;
     linesNumber = number;
-    statePerLine = (int*)calloc(linesNumber, sizeof(int));
-//TODO:     wordIdsPerLine = (int*)(linesNumber, sizeof(int));
+    statePerLine = new int[linesNumber];
+    addrPerLine = new int*[linesNumber];
+    for (int i = 0; i < lineSize; i ++) 
+        addrPerLine[i] = new int[lineSize];
 }
 
 Cache::~Cache(){
-    free(statePerLine);
+    delete[] statePerLine;
 }
 
 int Cache::retLineSize() {
@@ -30,10 +32,20 @@ void Cache::setStateOfLine(int lineIndex, int state) {
 }
 
 int Cache::findCacheLine(int wordAddress) {
-    std::cout<< wordAddress << std::endl;
     if (wordAddress >= linesNumber) {
         return findCacheLine(wordAddress/linesNumber);
     }
-    std::cout<< wordAddress << " " << linesNumber << std::endl;
-    return wordAddress;
+    return wordAddress-1;
+}
+
+int Cache::findTag(int wordAddress) {
+    return wordAddress%linesNumber;
+}
+
+int Cache::retWord(int cacheLine, int tag) {
+    return addrPerLine[cacheLine][tag];
+}
+
+void Cache::cacheWord(int cacheLine, int tag, int address) {
+    addrPerLine[cacheLine][tag] = address;
 }
