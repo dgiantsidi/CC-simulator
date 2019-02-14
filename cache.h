@@ -1,3 +1,5 @@
+#pragma once
+
 class Cache {
     public:
         Cache(int size, int number);

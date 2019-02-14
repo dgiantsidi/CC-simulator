@@ -15,9 +15,8 @@ class Parser{
 
         int parse() {
             std::string line;    
-
             if (std::getline(infile, line)) {
-                // std::cout << line << std::endl;
+                std::cout << line << std::endl;
                 processLine(line);
                 return 1;
             }

@@ -7,8 +7,14 @@ Cache::Cache(int size, int number) {
     linesNumber = number;
     statePerLine = new int[linesNumber];
     addrPerLine = new int*[linesNumber];
-    for (int i = 0; i < lineSize; i ++) 
+    for (int i = 0; i < linesNumber; i ++) 
         addrPerLine[i] = new int[lineSize];
+    for (int i = 0; i < linesNumber; i ++) 
+        statePerLine[i] = 0;
+    int i;
+    for (i = 0; i < linesNumber; i ++) 
+            for (int j = 0; j < lineSize; j++)
+                addrPerLine[i][j] = -1;
 }
 
 Cache::~Cache(){
@@ -35,11 +41,12 @@ int Cache::findCacheLine(int wordAddress) {
     if (wordAddress >= linesNumber) {
         return findCacheLine(wordAddress/linesNumber);
     }
-    return wordAddress-1;
+
+    return wordAddress;
 }
 
 int Cache::findTag(int wordAddress) {
-    return wordAddress%linesNumber;
+    return wordAddress%lineSize;
 }
 
 int Cache::retWord(int cacheLine, int tag) {
