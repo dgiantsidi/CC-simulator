@@ -7,7 +7,8 @@ int main (int argc, char* argv[]) {
     int lineSize = 1024;
     int linesNumber = 4;
     int procNumber = 1;
-
+    int hits = 0;
+    int invalidation_messages = 0;
     if (argc < 4) {
         std::cout << "Not enough arguments\n";
         std::cout << "Provide cache line size, lines' number and processors' number\n";
@@ -27,8 +28,6 @@ int main (int argc, char* argv[]) {
 
     MSI coherence_protocol(procNumber, procTable);
     
-    std::cout << procTable[0]->cache->retLineSize() << "---\n";
-    std::cout << coherence_protocol.processors[0]->cache->retLineSize() << "+++\n";
     Parser p;
     int ret;
     ret = p.parse();
@@ -36,19 +35,19 @@ int main (int argc, char* argv[]) {
     int adr;
     std::string opr;
     while (ret) {
-        // here cache coherence should be implemented
         pId = p.getProcessor();
         adr = p.getAddress();
         opr = p.getOper();
         if (opr.compare("R") == 0) {
             std::cout<<"READ\n";
-            // std::cout << "Processor: " << pId <<  " "  << opr << " " << adr << std::endl;
-            coherence_protocol.readRequest(pId, adr);
+            hits += coherence_protocol.readRequest(pId, adr);
         }
         else  {
             std::cout<<"WRITE\n";
-            coherence_protocol.writeRequest(pId, adr);
+            invalidation_messages += coherence_protocol.writeRequest(pId, adr);
         }
         ret = p.parse();
     }
+
+    std::cout<<"hits: "<< hits <<" invalidation_messages: "<< invalidation_messages << "\n";
 }
